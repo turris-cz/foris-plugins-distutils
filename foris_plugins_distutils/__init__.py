@@ -40,6 +40,12 @@ class make_messages(ForisPluginCommand):
         plugin_name = self.get_plugin_name()
         plugin_path = os.path.join("foris_plugins", plugin_name)
 
+        # make sure that locale directory exists
+        try:
+            os.makedirs(os.path.join(plugin_path, "locale"))
+        except os.error:
+            pass  # already exists
+
         # set message extractors in distribution
         distribution = copy.copy(self.distribution)
         setattr(distribution, "message_extractors", {plugin_path: self.MESSAGE_EXTRACTORS})
@@ -123,20 +129,34 @@ class build(ForisPluginCommand):
         plugin_name = self.get_plugin_name()
         plugin_path = os.path.join("foris_plugins", plugin_name)
 
-        # rename foris.po to messages to match the foris domain
+        # rename foris.po to messages.po to match the foris domain
+        catalog_exists = False
         for path in glob.glob(
             os.path.join(plugin_path, "locale", "*", "LC_MESSAGES", "foris.po")
         ):
+            catalog_exists = True
             shutil.copyfile(path, os.path.join(os.path.dirname(path), "messages.po"))
 
-        # compile translation
-        from babel.messages import frontend as babel
-        distribution = copy.copy(self.distribution)
-        cmd = babel.compile_catalog(distribution)
-        cmd.directory = os.path.join(plugin_path, "locale")
-        cmd.domain = "messages"
-        cmd.ensure_finalized()
-        cmd.run()
+        if catalog_exists:
+            # compile translation
+            from babel.messages import frontend as babel
+            distribution = copy.copy(self.distribution)
+            cmd = babel.compile_catalog(distribution)
+            cmd.directory = os.path.join(plugin_path, "locale")
+            cmd.domain = "messages"
+            cmd.ensure_finalized()
+            cmd.run()
+        else:
+            log.info("No translations found. Plugin will not be translated.")
+            log.info("To create translations you need to generate .pot file:")
+            log.info("    python setup.py foris_make_messages")
+            log.info("And prepare at least one catalog:")
+            out_dir = os.path.join(plugin_path, "locale")
+            pot_file = os.path.join(out_dir, "foris.pot")
+            log.info(
+                "    python setup.py init_catalog -D foris -i %s -d %s -l <lang>",
+                pot_file, out_dir
+            )
 
         # compile sass
         from sassutils import distutils as sass
