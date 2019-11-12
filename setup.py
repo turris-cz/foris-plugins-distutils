@@ -8,7 +8,7 @@ setup(
     description="Distutils patches to add commands for foris plugin handling",
     author="CZ.NIC, z. s. p. o.",
     author_email="stepan.henek@nic.cz",
-    url="https://gitlab.labs.nic.cz/turris/foris-plugins-distutils/",
+    url="https://gitlab.labs.nic.cz/turris/foris/foris-plugins-distutils/",
     license="GPL-3.0",
     requires=[],
     install_requires=["babel", "jinja2", "libsass"],
