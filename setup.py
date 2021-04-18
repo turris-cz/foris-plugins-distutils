@@ -3,8 +3,8 @@
 from setuptools import setup
 
 setup(
-    name="Foris Plugins Distutils",
-    version="0.31",
+    name="foris_plugins_distutils",
+    version="0.31.1",
     description="Distutils patches to add commands for foris plugin handling",
     author="CZ.NIC, z. s. p. o.",
     author_email="packaging@turris.cz",
