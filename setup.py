@@ -4,7 +4,7 @@ from setuptools import setup
 
 setup(
     name="Foris Plugins Distutils",
-    version="0.3",
+    version="0.31",
     description="Distutils patches to add commands for foris plugin handling",
     author="CZ.NIC, z. s. p. o.",
     author_email="packaging@turris.cz",
